@@ -1,5 +1,5 @@
 import justpy as jp
-from ysca import YSCA
+from src.ysca import YSCA
 import logging
 
 logging.getLogger('googleapicliet.discovery_cache').setLevel(logging.ERROR)
