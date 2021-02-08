@@ -92,5 +92,4 @@ dependencies:
     - uvicorn==0.13.3
     - websockets==8.1
 variables:
-  youtubeapikey: AIzaSyBSV_jMkfPvxrcbeyEzcbm2q27s0j7HgOY
-prefix: /home/alexkim/miniconda3/envs/YCSA
+  youtubeapikey: youryoutubeapikeyhere
