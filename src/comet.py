@@ -3,7 +3,7 @@ import googleapiclient.discovery
 from transformers import pipeline, AutoTokenizer, AutoModelForSequenceClassification
 
 
-class YSCA:
+class Comet:
     tokenizer = AutoTokenizer.from_pretrained("nlptown/bert-base-multilingual-uncased-sentiment")
     model = AutoModelForSequenceClassification.from_pretrained("nlptown/bert-base-multilingual-uncased-sentiment")
 
@@ -21,7 +21,7 @@ class YSCA:
             result["comment"] = comment
             # This feels very hacky... come up with a better one
             result["rating"] = int(list(filter(str.isdigit, result["label"]))[0])
-            del result["label"]
+            del result["label"], result["score"]
             analysis_list.append(result)
         except RuntimeError:
             analysis_list.append({"error": "Exceeded the maximum number of tokens.", "comment": comment})
@@ -31,26 +31,30 @@ class YSCA:
         os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
         api_service_name = "youtube"
         api_version = "v3"
-        DEVELOPER_KEY = os.environ.get("youtubeapikey")
-
+        api_key = os.environ.get("youtubeapikey")
         youtube = googleapiclient.discovery.build(
-            api_service_name, api_version, developerKey=DEVELOPER_KEY, cache_discovery=False)
-
-        request = youtube.commentThreads().list(
-            part="id,snippet,replies",
-            videoId=self.video_id,
-            max_results=100
-        )
-        response = request.execute()
-        items = response.get("items")
+            api_service_name, api_version, developerKey=api_key, cache_discovery=False)
+        page_token = None
         result = list()
-        for item in items:
-            if item.get("replies"):
-                for i in item.get("replies").get("comments"):
-                    comment = self._extract_comment(i.get("snippet"))
-                    self._sentiment_analysis(comment, result)
-            comment = self._extract_comment(item.get("snippet").get("topLevelComment").get("snippet"))
-            self._sentiment_analysis(comment, result)
+        while True:
+            request = youtube.commentThreads().list(
+                part="id,snippet,replies",
+                videoId=self.video_id,
+                maxResults=100,
+                pageToken=page_token
+            )
+            response = request.execute()
+            items = response.get("items")
+            page_token = response.get("nextPageToken")
+            if not page_token:
+                break
+            for item in items:
+                if item.get("replies"):
+                    for i in item.get("replies").get("comments"):
+                        comment = self._extract_comment(i.get("snippet"))
+                        self._sentiment_analysis(comment, result)
+                comment = self._extract_comment(item.get("snippet").get("topLevelComment").get("snippet"))
+                self._sentiment_analysis(comment, result)
         return result
 
     def pretty(self):
