@@ -56,11 +56,3 @@ class Comet:
                 comment = self._extract_comment(item.get("snippet").get("topLevelComment").get("snippet"))
                 self._sentiment_analysis(comment, result)
         return result
-
-    def pretty(self):
-        result = self.analyze()
-        sum = int()
-        for i in result:
-            if i.get("rating"):
-                sum += i.get("rating")
-        return sum / len(result)
