@@ -15,7 +15,3 @@ Initialize the conda environment using `environment.yml`
 * Make sure to set your `youtubeapikey` variable in `environment.yml`  
 * Set your conda environment, activate, then run `python main.py`  
 * Input the video id from the desired YouTube video in the frontend UI  
-
-## TODO
-Currently only analyzing the newest 20 comments. Soon it will cover the entire video.  
-This will be change its course and be a self-hosted API using FastAPI
