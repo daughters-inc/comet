@@ -13,5 +13,7 @@ Listed in `environment.yml`
 Initialize the conda environment using `environment.yml`
 ## Usage
 * Make sure to set your `youtubeapikey` variable in `environment.yml`  
-* Set your conda environment, activate, then run `python main.py`  
-* Input the video id from the desired YouTube video in the frontend UI  
+* Set your conda environment, activate, then run `uvicorn main:app --reload`  
+* Make API requests to `http://127.0.0.1:8000`
+## API Endpoint
+Refer to `http://127.0.0.1:8000/docs`
